@@ -153,6 +153,10 @@ class ServerProto(Proto):
 		self.period_trigger.stop()
 
 
+def get_state():
+	return _Detail.state
+
+
 def tcp_handle(conn, addr):
 	proto = ServerProto(state=_Detail.state, context=Context(connection=conn, address=addr))
 	proto.run()
