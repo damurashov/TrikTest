@@ -10,6 +10,9 @@ class Context:
 	connection: socket
 	address: tuple
 
+	def get_host_port(self):
+		return self.connection.getsockname()[1]
+
 
 class Handle:
 
