@@ -37,7 +37,7 @@ class Log(Handle):
 	context: Context
 
 	def _log(self, *args):
-		Logging.debug(*args, "context", self.context)
+		Logging.debug(*args, "context", self.context.address)
 
 	def on_register(self, port, hull):
 		self._log(Log, Log.on_register, "port", port, "hull", hull)
