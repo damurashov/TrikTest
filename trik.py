@@ -64,7 +64,7 @@ class State(Handle):
 
 
 class _Detail:
-	state = State(clients=list(), servers=list(), peers=list(), lock=Lock())
+	state = State()
 
 
 @dataclass
