@@ -18,6 +18,8 @@ class Server:
 		if self.handler:
 			Logging.info(Server, Server._handle, "running handler")
 			self.handler(conn, addr)
+			conn.shutdown(2)
+			conn.close()
 		else:
 			Logging.warning(Server, Server.accept, "no handlers were found")
 
