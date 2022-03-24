@@ -94,12 +94,12 @@ class PeriodTrigger:
 	def _timer(self):
 		while self.time_run:
 			Logging.debug(PeriodTrigger, "timeout")
+			time.sleep(self.time_period_sec)
 			now = time.time()
 			for h in self.process_sequence:
 				h.on_iter(now - self.time_prev)
 
 			self.time_prev = now
-			time.sleep(self.time_period_sec)
 
 
 @dataclass
