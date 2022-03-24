@@ -109,12 +109,8 @@ class Proto:
 		self.period_trigger = PeriodTrigger(self.process_sequence)
 		self.period_trigger.start()
 
-	def _iter(self):
-		data = self.context.connection.recv(128)
-
-		if not len(data):
-			return False
-
+	def _process_received(self, data):
+		assert(len(data))
 		parsed = parser.unmarshalling(data)
 
 		if parsed is not None:
@@ -126,6 +122,14 @@ class Proto:
 					"keepalive": h.on_keepalive,
 					"data": h.on_data,
 				}[parsed[0]](*parsed[1:])
+
+	def _iter(self):
+		data = self.context.connection.recv(128)
+
+		if not len(data):
+			return False
+
+		self._process_received(data)
 
 		return True
 
