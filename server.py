@@ -7,17 +7,13 @@ class Server:
 
 	def __init__(self):
 		self.handlers = list()
-		self.lock = Lock()
 		self.threads = list()
 		self.handler = None
 
 	def set_handler(self, cb=lambda conn, addr: None):
-		self.lock.acquire()
 		self.handler = cb
-		self.lock.release()
 
 	def _handle(self, conn, addr):
-		self.lock.acquire()
 
 		if self.handler:
 			Logging.info(Server, Server._handle, "running handler")
@@ -25,7 +21,6 @@ class Server:
 		else:
 			Logging.warning(Server, Server.accept, "no handlers were found")
 
-		self.lock.release()
 
 	def accept(self):
 		IP = "127.0.0.1"
@@ -39,7 +34,8 @@ class Server:
 			while True:
 				conn, addr = s.accept()
 				Logging.info(Server, Server.accept, "connected", str(addr))
-				self._handle(conn, addr)
+				self.threads.append(Thread(target=self._handle, args=(conn, addr,)))
+				self.threads[-1].start()
 
 
 class _Detail:
