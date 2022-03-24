@@ -25,7 +25,7 @@ class Server:
 
 
 	def accept(self):
-		IP = "127.0.0.1"
+		IP = "0.0.0.0"
 		PORT = 8889
 
 		with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
