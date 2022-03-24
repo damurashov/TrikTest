@@ -13,7 +13,6 @@ assert type(LENGTH_TABLE["keepalive"]) is int
 def unmarshalling(s):
 	s = s.decode("utf-8").strip()
 	ret = s.split(":")
-	Logging.debug(__file__, unmarshalling, ret)
 
 	if len(ret) < 2:
 		Logging.warning(__file__, unmarshalling, "wrong sequence", s)
