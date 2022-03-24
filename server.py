@@ -47,13 +47,6 @@ class _Detail:
 	thread = None
 
 
-def start():
-	if _Detail.server is None:
-		_Detail.server = Server()
-		_Detail.thread = Thread(target=_Detail.server.accept)
-		_Detail.thread.start()
-
-
 def _echo_handler(conn, addr):
 	Logging.debug(__file__, _echo_handler, "echo, serving", str(addr))
 	for i in range(5):
@@ -61,9 +54,15 @@ def _echo_handler(conn, addr):
 		conn.sendall(data)
 
 
+def start(handler=_echo_handler):
+	if _Detail.server is None:
+		_Detail.server = Server()
+		_Detail.server.set_handler(handler)
+		_Detail.thread = Thread(target=_Detail.server.accept)
+		_Detail.thread.start()
+
+
 if __name__ == "__main__":
 	start()
-	Logging.info(__file__, "started")
-	_Detail.server.set_handler(_echo_handler)
 	while True:
 		pass
