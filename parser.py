@@ -8,24 +8,27 @@ LENGTH_TABLE = {
 	"keepalive": 0,
 	"data": 1,
 }
+assert type(LENGTH_TABLE["keepalive"]) is int
 
-def unmarshalling(s: str):
+def unmarshalling(s):
+	s = s.decode("utf-8").strip()
 	ret = s.split(":")
+	Logging.debug(__file__, unmarshalling, ret)
 
-	if not len(ret):
+	if len(ret) < 2:
 		Logging.warning(__file__, unmarshalling, "wrong sequence", s)
 		return None
 
 	if not str(ret[0]).isdigit():
-		Logging.warning(__file__, unmarshalling, "non-digit preamble", s)
+		Logging.warning(__file__, unmarshalling, "non-digit preamble", s, ":", ret[0])
 		return None
 
 	if not ret[1] in LENGTH_TABLE.keys():
-		Logging.warning(__file__, unmarshalling, "wrong message type", s)
+		Logging.warning(__file__, unmarshalling, "wrong message type", s, ':', ret[1])
 		return None
 
-	if len(ret) != LENGTH_TABLE[ret[1]] - 2:
-		Logging.warning(__file__, unmarshalling, "wrong message length", s)
+	if len(ret) != LENGTH_TABLE[ret[1]] + 2:
+		Logging.warning(__file__, unmarshalling, "wrong message length", s, ":", len(ret), "expected", LENGTH_TABLE[ret[1]])
 
 	return ret[1:]
 
