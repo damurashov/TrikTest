@@ -105,9 +105,7 @@ class Proto:
 	context: Context
 
 	def __post_init__(self):
-		self.process_sequence = [self.state, Log(self.context)]
-		self.period_trigger = PeriodTrigger(self.process_sequence)
-		self.period_trigger.start()
+		self.process_sequence = []
 
 	def _process_received(self, data):
 		assert(len(data))
@@ -123,6 +121,15 @@ class Proto:
 					"data": h.on_data,
 				}[parsed[0]](*parsed[1:])
 
+
+class ServerProto(Proto):
+
+	def __post_init__(self):
+		Proto.__post_init__(self)
+		self.process_sequence = [self.state, Log(self.context)]
+		self.period_trigger = PeriodTrigger(self.process_sequence)
+		self.period_trigger.start()
+
 	def _iter(self):
 		data = self.context.connection.recv(128)
 
@@ -134,12 +141,12 @@ class Proto:
 		return True
 
 	def run(self):
-		Logging.info(Proto, Proto.run, "serving", self.context)
+		Logging.info(Proto, ServerProto.run, "serving", self.context)
 
 		while self._iter():
 			pass
 
-		Logging.info(Proto, Proto.run, "finished serving", self.context)
+		Logging.info(Proto, ServerProto.run, "finished serving", self.context)
 
 	def __del__(self):
 		self.stop_flag = True
@@ -147,6 +154,6 @@ class Proto:
 
 
 def tcp_handle(conn, addr):
-	proto = Proto(state=_Detail.state, context=Context(connection=conn, address=addr))
+	proto = ServerProto(state=_Detail.state, context=Context(connection=conn, address=addr))
 	proto.run()
 
