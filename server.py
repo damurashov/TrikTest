@@ -3,22 +3,6 @@ from threading import Thread, Lock
 from generic import Logging
 
 
-class Client:
-	_threads = list()
-
-	@staticmethod
-	def _async_connect(host, port, handle=lambda conn, addr: None):
-		conn = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-		conn.connect((host, port,))
-		handle(conn, (host, port,))
-		conn.shutdown(2)
-		conn.close()
-
-	@staticmethod
-	def async_connect(host, port, handle = lambda conn, addr: None):
-		Client._threads.append(Thread(target=Client._async_connect, args=(host, port, handle)))
-		Client._threads[-1].start()
-
 class Server:
 
 	def __init__(self):
