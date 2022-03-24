@@ -19,6 +19,8 @@ class _Client:
 				conn.shutdown(2)
 			except ConnectionRefusedError:
 				Logging.error(__file__, "could not connect to", host, port)
+			except Exception as e:
+				Logging.error(__file__, "caught exception", str(e))
 			finally:
 				conn.close()
 
