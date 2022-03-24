@@ -50,4 +50,4 @@ def marshalling(*args):
 	ret = ":".join([str(a) for a in args])
 	ret = str(len(ret)) + ":" + ret
 
-	return ret
+	return str.encode(ret)
