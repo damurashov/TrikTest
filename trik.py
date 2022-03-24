@@ -67,13 +67,30 @@ class _Detail:
 	state = State()
 
 
-@dataclass
-class Proto:
-	state: State
-	context: Context
+class PeriodTrigger:
+
+	def __init__(self, process_sequence, timeout_sec=3):
+		# Timer thread
+		self.process_sequence = process_sequence
+		self.time_run = True
+		self.time_prev = time.time()
+		self.time_period_sec = timeout_sec
+		self.time_thread = Thread(target=self._timer)
+
+	def stop(self):
+		self.time_run = False
+		self.time_thread.join()
+
+	def __del__(self):
+		self.stop()
+
+	def start(self):
+		self.time_run = True
+		self.time_thread.start()
 
 	def _timer(self):
 		while self.time_run:
+			Logging.debug(PeriodTrigger, "timeout")
 			now = time.time()
 			for h in self.process_sequence:
 				h.on_iter(now - self.time_prev)
@@ -81,14 +98,16 @@ class Proto:
 			self.time_prev = now
 			time.sleep(self.time_period_sec)
 
+
+@dataclass
+class Proto:
+	state: State
+	context: Context
+
 	def __post_init__(self):
 		self.process_sequence = [self.state, Log(self.context)]
-		# Timer thread
-		self.time_run = True
-		self.time_prev = time.time()
-		self.time_period_sec = 3
-		self.time_thread = Thread(target=self._timer)
-		self.time_thread.start()
+		self.period_trigger = PeriodTrigger(self.process_sequence)
+		self.period_trigger.start()
 
 	def _iter(self):
 		data = self.context.connection.recv(128)
@@ -120,7 +139,7 @@ class Proto:
 
 	def __del__(self):
 		self.stop_flag = True
-		self.time_thread.join()
+		self.period_trigger.stop()
 
 
 def tcp_handle(conn, addr):
