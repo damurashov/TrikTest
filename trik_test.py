@@ -62,6 +62,6 @@ class TestRegisterClientProto(Proto, Handle, unittest.TestCase):
 			self._process_received(data)
 
 
-def handle_run_test_registry(conn, addr):
+def handle_run_test_register(conn, addr):
 	TestProto.registry.append(TestRegisterClientProto(trik_get_state(), Context(conn, addr)))
 	TestProto.registry[-1].run_blocking()
