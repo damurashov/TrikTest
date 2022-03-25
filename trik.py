@@ -5,6 +5,9 @@ from generic import Logging
 from socket import socket
 
 
+HULL_NUMBER = 666
+
+
 @dataclass
 class Context:
 	connection: socket
@@ -60,10 +63,32 @@ class Log(Handle):
 
 @dataclass
 class State(Handle):
-	clients: list = field(default_factory=list)
-	servers: list = field(default_factory=list)
-	peers: list = field(default_factory=list)
+
+	@dataclass
+	class Peer:
+		address: tuple
+		hull_number: int
+
+	peers: dict = field(default_factory=dict)
 	lock: Lock = field(default_factory=Lock)
+
+	def update_peer(self, ip, port, hull_number):
+		self.peers[hull_number] = State.Peer((ip, port,), hull_number)
+
+
+@dataclass
+class RegisterHandle(Handle):
+	state: State
+	context: Context
+
+	def on_register(self, port, hull_number):
+		Logging.info(__file__, RegisterHandle, "new client", "ip", self.context.address[0], "port", port, "hull",
+			hull_number)
+		self.state.update_peer(self.context.address[0], port, hull_number)
+		self.context.connection.sendall(parser.marshalling("self", HULL_NUMBER))
+
+		for peer in self.state.peers.values():
+			self.context.connection.sendall(parser.marshalling("connection", *peer.address, peer.hull_number))
 
 
 class _Detail:
@@ -93,14 +118,12 @@ class PeriodTrigger:
 
 	def _timer(self):
 		while self.time_run:
-			Logging.debug(PeriodTrigger, "timeout")
 			time.sleep(self.time_period_sec)
 			now = time.time()
 			for h in self.process_sequence:
 				h.on_iter(now - self.time_prev)
 
 			self.time_prev = now
-
 
 @dataclass
 class Proto:
@@ -129,7 +152,7 @@ class ServerProto(Proto):
 
 	def __post_init__(self):
 		Proto.__post_init__(self)
-		self.process_sequence = [self.state, Log(self.context)]
+		self.process_sequence = [self.state, Log(self.context), RegisterHandle(self.state, self.context)]
 		self.period_trigger = PeriodTrigger(self.process_sequence)
 		self.period_trigger.start()
 
