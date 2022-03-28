@@ -48,7 +48,7 @@ class TestRegisterClientProto(Proto, Handle):
 
 	def on_connection(self, ip, port, hull_number):
 		self.got_connection = True
-		Logging.info(__file__, TestRegisterClientProto, "connection", "ip", ip, "port", port, "null", hull_number)
+		Logging.info(__file__, TestRegisterClientProto, "connection", "ip", ip, "port", port, "hull", hull_number)
 
 	def run_blocking(self):
 		Logging.info(__file__, TestRegisterClientProto, "started, waiting for command")
