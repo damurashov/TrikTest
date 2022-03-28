@@ -19,7 +19,7 @@ def command(s: str):
 
 class TestRegisterClientProto(Proto, Handle):
 	def __post_init__(self):
-		TestProto.__post_init__(self)
+		Proto.__post_init__(self)
 		self.timeout_sec = 30
 		self.process_sequence = [self.state, self]
 		self.period_trigger = PeriodTrigger(self.process_sequence, timeout_sec=self.timeout_sec)
