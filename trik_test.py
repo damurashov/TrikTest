@@ -11,7 +11,7 @@ class TestProto(Proto):
 
 
 def command(s: str):
-	Logging.debug(__file__, 'command')
+	Logging.debug(__file__, 'command', s)
 	s = s.strip()
 	for t in TestProto.registry:
 		t.on_command(s)
@@ -66,11 +66,21 @@ class TestRegisterClientProto(Proto, Handle):
 			self._process_received(data)
 
 
-class EchoHandler(Proto):
+class EchoHandler(Proto, Handle):
 
 	def __post_init__(self):
 		Proto.__post_init__(self)
 		self.process_sequence = [self.state, self]
+
+	def on_command(self, command):
+		command = [s.strip() for s in command.split()]
+
+		if not len(command) == 2:
+			return
+
+		Logging.debug(__file__, EchoHandler, "got message to send")
+		if command[0] == "echo":
+			self.context.connection.sendall(parser.marshalling("data", command[1]))
 
 	def on_data(self, data: str):
 		if data == "echo":
@@ -90,4 +100,5 @@ def handle_run_test_register(conn, addr):
 
 
 def handle_run_test_echo(conn, addr):
-	EchoHandler(trik_get_state(), Context(conn, addr)).run_blocking()
+	TestProto.registry.append(EchoHandler(trik_get_state(), Context(conn, addr)))
+	TestProto.registry[-1].run_blocking()
