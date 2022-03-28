@@ -1,7 +1,6 @@
 from trik import Proto, Handle, PeriodTrigger, get_state as trik_get_state, Context
 import parser
 from generic import Logging
-import unittest
 
 
 class TestProto(Proto):
@@ -18,11 +17,12 @@ def command(s: str):
 		t.on_command(s)
 
 
-class TestRegisterClientProto(Proto, Handle, unittest.TestCase):
+class TestRegisterClientProto(Proto, Handle):
 	def __post_init__(self):
 		TestProto.__post_init__(self)
+		self.timeout_sec = 30
 		self.process_sequence = [self.state, self]
-		self.period_trigger = PeriodTrigger(self.process_sequence, timeout_sec=10)
+		self.period_trigger = PeriodTrigger(self.process_sequence, timeout_sec=self.timeout_sec)
 		self.period_trigger.start()
 
 		self.flag = False
@@ -30,7 +30,11 @@ class TestRegisterClientProto(Proto, Handle, unittest.TestCase):
 		self.got_connection = False
 
 	def on_iter(self, time_delta_sec):
-		self.assertTrue(self.got_self and self.got_connection)
+		if not (self.got_self and self.got_connection):
+			message = f"Could not get a response in {self.timeout_sec} sec."
+			Logging.error(TestRegisterClientProto, message)
+			raise Exception(message)
+
 		self.flag = True
 
 	def on_command(self, command: str):
@@ -40,11 +44,11 @@ class TestRegisterClientProto(Proto, Handle, unittest.TestCase):
 
 	def on_self(self, hull_number):
 		self.got_self = True
-		Logging.info(__file__, TestRegisterClientProto, "self")
+		Logging.info(__file__, TestRegisterClientProto, "self", "hull", hull_number)
 
 	def on_connection(self, ip, port, hull_number):
 		self.got_connection = True
-		Logging.info(__file__, TestRegisterClientProto, "connection")
+		Logging.info(__file__, TestRegisterClientProto, "connection", "ip", ip, "port", port, "hull", hull_number)
 
 	def run_blocking(self):
 		Logging.info(__file__, TestRegisterClientProto, "started, waiting for command")
@@ -53,7 +57,7 @@ class TestRegisterClientProto(Proto, Handle, unittest.TestCase):
 			pass
 
 		Logging.debug(__file__, TestRegisterClientProto, "sending")
-		self.context.connection.sendall(parser.marshalling("register", self.context.get_host_port(), 4))
+		self.context.connection.sendall(parser.marshalling("register", self.context.get_host_port(), 777))
 
 		self.flag = False
 
@@ -62,6 +66,28 @@ class TestRegisterClientProto(Proto, Handle, unittest.TestCase):
 			self._process_received(data)
 
 
-def handle_run_test_registry(conn, addr):
+class EchoHandler(Proto):
+
+	def __post_init__(self):
+		Proto.__post_init__(self)
+		self.process_sequence = [self.state, self]
+
+	def on_data(self, data: str):
+		if data == "echo":
+			Logging.debug(__file__, EchoHandler, "got echo, sending response")
+			self.context.connection.sendall(parser.marshalling("data", "echoecho"))
+
+	def run_blocking(self):
+		self.context.connection.sendall(parser.marshalling("register", self.context.get_host_port(), 888))
+
+		while True:
+			self._process_received(self.context.connection.recv(128))
+
+
+def handle_run_test_register(conn, addr):
 	TestProto.registry.append(TestRegisterClientProto(trik_get_state(), Context(conn, addr)))
 	TestProto.registry[-1].run_blocking()
+
+
+def handle_run_test_echo(conn, addr):
+	EchoHandler(trik_get_state(), Context(conn, addr)).run_blocking()

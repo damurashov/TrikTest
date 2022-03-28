@@ -88,6 +88,9 @@ class RegisterHandle(Handle):
 		self.context.connection.sendall(parser.marshalling("self", HULL_NUMBER))
 
 		for peer in self.state.peers.values():
+			if peer.address == self.context.address:
+				continue
+
 			self.context.connection.sendall(parser.marshalling("connection", *peer.address, peer.hull_number))
 
 
