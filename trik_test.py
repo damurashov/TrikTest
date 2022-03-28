@@ -66,6 +66,26 @@ class TestRegisterClientProto(Proto, Handle):
 			self._process_received(data)
 
 
+class TestDataServerProtoEcho(Proto):
+
+	def __post_init__(self):
+		Proto.__post_init__(self)
+		self.process_sequence = [self.state, self]
+
+	def on_data(self, data: str):
+		if data == "echo":
+			Logging.debug(__file__, TestDataServerProtoEcho, "got echo, sending response")
+			self.context.connection.sendall(parser.marshalling("data", "echoecho"))
+
+	def run_blocking(self):
+		while True:
+			self._process_received(self.context.connection.recv(128))
+
+
 def handle_run_test_register(conn, addr):
 	TestProto.registry.append(TestRegisterClientProto(trik_get_state(), Context(conn, addr)))
 	TestProto.registry[-1].run_blocking()
+
+
+def handle_run_test_echo(conn, addr):
+	TestDataServerProtoEcho(trik_get_state(), Context(conn, addr)).run_blocking()
