@@ -83,9 +83,7 @@ class EchoHandler(Proto, Handle):
 			self.context.connection.sendall(parser.marshalling("data", command[1]))
 
 	def on_data(self, data: str):
-		if data == "echo":
-			Logging.debug(__file__, EchoHandler, "got echo, sending response")
-			self.context.connection.sendall(parser.marshalling("data", "echoecho"))
+		Logging.debug(__file__, EchoHandler, "got data", f'"{data}"')
 
 	def run_blocking(self):
 		self.context.connection.sendall(parser.marshalling("register", self.context.get_host_port(), 888))
