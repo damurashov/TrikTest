@@ -86,7 +86,7 @@ class EchoHandler(Proto, Handle):
 		Logging.debug(__file__, EchoHandler, "got data", f'"{data}"')
 
 	def run_blocking(self):
-		self.context.connection.sendall(parser.marshalling("register", self.context.get_host_port(), 888))
+		self.context.connection.sendall(parser.marshalling("register", 8889, 888))
 
 		while True:
 			self._process_received(self.context.connection.recv(128))
