@@ -5,7 +5,7 @@ from generic import Logging
 from socket import socket
 
 
-HULL_NUMBER = 666
+HULL_NUMBER = 888
 
 
 @dataclass
