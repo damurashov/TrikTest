@@ -16,6 +16,9 @@ class Context:
 	def get_host_port(self):
 		return self.connection.getsockname()[1]
 
+	def get_host_ip(self):
+		return self.connection.getsockname()[0]
+
 
 class Handle:
 
@@ -94,6 +97,22 @@ class RegisterHandle(Handle):
 			self.context.connection.sendall(parser.marshalling("connection", *peer.address, peer.hull_number))
 
 
+@dataclass
+class FakeConnHandle(Handle):
+	state: State
+	context: Context
+
+	def on_register(self, port, hull_number):
+		Logging.info(__file__, FakeConnHandle, "new client", "ip", self.context.address[0], "port", port, "hull",
+					 hull_number)
+		self.state.update_peer(self.context.address[0], port, hull_number)
+		self.context.connection.sendall(parser.marshalling("self", HULL_NUMBER))
+
+		for i in range(1, 4):
+			hull = int(str(i) * 3)  # 1 -> 111, 2 -> 222...
+			self.context.connection.sendall(parser.marshalling("connection", *self.context.address, hull))
+
+
 class _Detail:
 	state = State()
 
@@ -155,7 +174,11 @@ class ServerProto(Proto):
 
 	def __post_init__(self):
 		Proto.__post_init__(self)
-		self.process_sequence = [self.state, Log(self.context), RegisterHandle(self.state, self.context)]
+		self.process_sequence = [self.state,
+			Log(self.context),
+			RegisterHandle(self.state, self.context),
+			FakeConnHandle(self.state, self.context),
+		]
 		self.period_trigger = PeriodTrigger(self.process_sequence)
 		self.period_trigger.start()
 
