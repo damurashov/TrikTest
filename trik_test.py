@@ -1,4 +1,4 @@
-from trik import Proto, Handle, PeriodTrigger, get_state as trik_get_state, Context
+from trik import Proto, Handle, PeriodTrigger, get_state as trik_get_state, Context, HULL_NUMBER
 import parser
 from generic import Logging
 
@@ -82,11 +82,17 @@ class EchoHandler(Proto, Handle):
 		if command[0] == "echo":
 			self.context.connection.sendall(parser.marshalling("data", command[1]))
 
+	def on_self(self, hull_number):
+		Logging.debug(__file__, EchoHandler, 'got "self" from hull', hull_number)
+
+	def on_connection(self, ip, port, hull_number):
+		Logging.info(__file__, EchoHandler, "connection", "ip", ip, "port", port, "hull", hull_number)
+
 	def on_data(self, data: str):
 		Logging.debug(__file__, EchoHandler, "got data", f'"{data}"')
 
 	def run_blocking(self):
-		self.context.connection.sendall(parser.marshalling("register", 8889, 888))
+		self.context.connection.sendall(parser.marshalling("register", 8889, HULL_NUMBER))
 
 		while True:
 			self._process_received(self.context.connection.recv(128))
