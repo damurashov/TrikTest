@@ -57,7 +57,7 @@ class TestRegisterClientProto(Proto, Handle):
 			pass
 
 		Logging.debug(__file__, TestRegisterClientProto, "sending")
-		self.context.connection.sendall(parser.marshalling("register", self.context.get_host_port(), 777))
+		self.context.connection.sendall(parser.marshalling("register", 8889, HULL_NUMBER))
 
 		self.flag = False
 

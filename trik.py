@@ -94,6 +94,7 @@ class RegisterHandle(Handle):
 			if peer.address == self.context.address:
 				continue
 
+			Logging.info(__file__, RegisterHandle, "sending connection", "address", peer.address, "hull", peer.hull_number)
 			self.context.connection.sendall(parser.marshalling("connection", *peer.address, peer.hull_number))
 
 
@@ -103,13 +104,14 @@ class FakeConnHandle(Handle):
 	context: Context
 
 	def on_register(self, port, hull_number):
-		Logging.info(__file__, FakeConnHandle, "new client", "ip", self.context.address[0], "port", port, "hull",
-					 hull_number)
+		Logging.info(__file__, FakeConnHandle, "new client", "ip", self.context.address[0], "port", port, "hull", hull_number)
 		self.state.update_peer(self.context.address[0], port, hull_number)
 		self.context.connection.sendall(parser.marshalling("self", HULL_NUMBER))
 
-		for i in range(1, 4):
+		for i in range(1, 9):
+			time.sleep(.2)
 			hull = int(str(i) * 3)  # 1 -> 111, 2 -> 222...
+			Logging.info(__file__, FakeConnHandle, "sending fake connection", "hull", hull)
 			self.context.connection.sendall(parser.marshalling("connection", *self.context.address, hull))
 
 
