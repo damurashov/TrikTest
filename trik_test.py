@@ -82,6 +82,12 @@ class EchoHandler(Proto, Handle):
 		if command[0] == "echo":
 			self.context.connection.sendall(parser.marshalling("data", command[1]))
 
+	def on_self(self, hull_number):
+		Logging.debug(__file__, EchoHandler, 'got "self" from hull', hull_number)
+
+	def on_connection(self, ip, port, hull_number):
+		Logging.info(__file__, EchoHandler, "connection", "ip", ip, "port", port, "hull", hull_number)
+
 	def on_data(self, data: str):
 		Logging.debug(__file__, EchoHandler, "got data", f'"{data}"')
 
