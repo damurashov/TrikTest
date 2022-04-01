@@ -179,7 +179,7 @@ class ServerProto(Proto):
 		self.process_sequence = [self.state,
 			Log(self.context),
 			RegisterHandle(self.state, self.context),
-			FakeConnHandle(self.state, self.context),
+			# FakeConnHandle(self.state, self.context),
 		]
 		self.period_trigger = PeriodTrigger(self.process_sequence)
 		self.period_trigger.start()
