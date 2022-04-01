@@ -28,6 +28,7 @@ def unmarshalling(s):
 
 	if len(ret) != LENGTH_TABLE[ret[1]] + 2:
 		Logging.warning(__file__, unmarshalling, "wrong message length", s, ":", len(ret), "expected", LENGTH_TABLE[ret[1]])
+		return None
 
 	return ret[1:]
 
@@ -49,5 +50,7 @@ def marshalling(*args):
 
 	ret = ":".join([str(a) for a in args])
 	ret = str(len(ret)) + ":" + ret
+
+	# Logging.debug(__file__, marshalling, "payload", ret)
 
 	return str.encode(ret)
