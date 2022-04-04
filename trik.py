@@ -6,7 +6,7 @@ from socket import socket
 
 
 HULL_NUMBER = 888
-HULL_NUMBER_CLI = 11
+HULL_NUMBER_CLI = 888
 
 
 @dataclass
