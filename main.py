@@ -1,10 +1,20 @@
-import server, trik, client, trik_test
+import server, trik, client
+from generic import Logging
+import sys
 
 
 if __name__ == "__main__":
-	server.start(trik.tcp_handle)
-	client.async_connect("192.168.4.1", 8889, trik_test.handle_run_test_echo)
-	# client.async_connect("192.168.4.1", 8889, trik_test.handle_run_test_register)
+	if sys.argv[1] == "server":
+		server.start(trik.tcp_handle)
+	elif sys.argv[1] == "client":
+		client.async_connect("192.168.4.1", 8889, trik.tcp_handle)
+	else:
+		print("wrong args")
+		exit(0)
+
 	while True:
 		command = input("> ")
-		trik_test.command(command)
+		command = command.split(" ")
+		command = [c.strip() for c in command]
+		Logging.debug(__file__, "command", command)
+		trik.cli(*command)
