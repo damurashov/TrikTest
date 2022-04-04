@@ -45,6 +45,9 @@ class Handle:
 class Log(Handle):
 	context: Context
 
+	def __post_init__(self):
+		Handle.__init__(self)
+
 	def _log(self, *args):
 		Logging.debug(*args, "context", self.context.address)
 

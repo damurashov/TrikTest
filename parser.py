@@ -30,6 +30,8 @@ def unmarshalling(s):
 		Logging.warning(__file__, unmarshalling, "wrong message length", s, ":", len(ret), "expected", LENGTH_TABLE[ret[1]])
 		return None
 
+	# Logging.debug(__file__, unmarshalling, "got data", ret)
+
 	return ret[1:]
 
 
