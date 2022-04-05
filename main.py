@@ -5,7 +5,7 @@ import sys
 
 if __name__ == "__main__":
 	if sys.argv[1] == "server":
-		server.start(trik.tcp_handle)
+		server.start(trik.tcp_handle, 8889)
 	elif sys.argv[1] == "client":
 		client.async_connect("192.168.4.1", 8889, trik.tcp_handle)
 	else:
