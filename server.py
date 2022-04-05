@@ -5,10 +5,11 @@ from generic import Logging
 
 class Server:
 
-	def __init__(self):
+	def __init__(self, port=8889):
 		self.handlers = list()
 		self.threads = list()
 		self.handler = None
+		self.port = port
 
 	def set_handler(self, cb=lambda conn, addr: None):
 		self.handler = cb
@@ -26,7 +27,7 @@ class Server:
 
 	def accept(self):
 		IP = "0.0.0.0"
-		PORT = 8889
+		PORT = self.port
 
 		with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
 			s.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
@@ -52,9 +53,9 @@ def _echo_handler(conn, addr):
 		conn.sendall(data)
 
 
-def start(handler=_echo_handler):
+def start(handler=_echo_handler, port=8889):
 	if _Detail.server is None:
-		_Detail.server = Server()
+		_Detail.server = Server(port=port)
 		_Detail.server.set_handler(handler)
 		_Detail.thread = Thread(target=_Detail.server.accept)
 		_Detail.thread.start()
