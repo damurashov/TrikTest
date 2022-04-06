@@ -190,6 +190,15 @@ class EchoCli(Cli):
 		if args[0] == "echo" and len(args) > 1:
 			Logging.info(__file__, EchoCli, "sending echo", args)
 			self.context.connection.sendall(parser.marshalling("data", " ".join(args[1:])))
+		elif args[0] == "multiecho":
+			Logging.info(__file__, EchoCli, "sending multiecho", args)
+			try:
+				n = int(args[1])
+			except:
+				pass
+
+			for i in range(n):
+				self.context.connection.sendall(parser.marshalling("data", " ".join(args[2:])))
 
 
 @dataclass
