@@ -28,7 +28,7 @@ class Server:
 	def accept(self):
 		IP = "0.0.0.0"
 		PORT = self.port
-		Logging.info(__file__, Server, "trying to open connection", "IP", IP)
+		Logging.info(__file__, Server, "trying to open connection", "IP", IP, "port", PORT)
 
 		with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
 			s.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
