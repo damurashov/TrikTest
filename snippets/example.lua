@@ -35,17 +35,17 @@ end
 -- changeColor(colors[7])
 
 function connect()
-    TrikMailbox.connect(192, 168, 4, 2, 8889)
+    mailbox.connect("192.168.4.2", 8889)
 end
 
 function echo()
     local hull = -1
     local message = ""
     for i=1,2 do
-        message, hull = TrikMailbox.receive(true)
-        TrikMailbox.send(message, hull)
+        message, hull = mailbox.receive(true)
+        mailbox.send(hull, message)
     end
-    TrikMailbox.send("Man, I'm tired. Leave me alone", hull)
+    mailbox.send(hull, "Man, I'm tired. Leave me alone")
 end
 
 function echochk()
@@ -56,23 +56,23 @@ function echochk()
 
     changeColor({1, 1, 1})
     while (icolor ~= ncolors + 1) do
-        if TrikMailbox.hasMessages() then
-            message, hull = TrikMailbox.receive(false)
-            TrikMailbox.send(message, hull)
+        if mailbox.hasMessages() then
+            message, hull = mailbox.receive(false)
+            mailbox.send(hull, message)
             changeColor(colors[icolor])
             icolor = icolor + 1
         end
     end
-    TrikMailbox.send("Oops. I'm out of colors...", hull)
+    mailbox.send(hull, "Oops. I'm out of colors...")
     changeColor({0, 0, 0})
 end
 
 function send()
-    TrikMailbox.send("Hi", 888)
+    mailbox.send(888, "Hi")
 end
 
 function sendall()
-    TrikMailbox.send("Hi everyone", -1)
+    mailbox.send(-1, "Hi everyone")
 end
 
 -- send()
