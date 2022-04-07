@@ -68,18 +68,25 @@ function echochk()
 end
 
 function send()
-    mailbox.send(888, "Hi")
+    mailbox.send(888, "Hi. Let's get to know each other. Here is my hull number. Call me")
+    mailbox.send(888, tostring(mailbox.myHullNumber()))
 end
 
 function sendall()
     mailbox.send(-1, "Hi everyone")
 end
 
+function sendHullNumber()
+    mailbox.setHullNumber(11)
+    send()
+end
+
 -- send()
 -- sendall()
--- connect()
+connect()
+sendHullNumber()
 -- echo()
-echochk()
+-- echochk()
 changeColor(colors[5])
 
 
