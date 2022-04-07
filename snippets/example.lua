@@ -35,7 +35,7 @@ end
 -- changeColor(colors[7])
 
 function connect()
-    mailbox.connect(192, 168, 4, 2, 8889)
+    mailbox.connect("192.168.4.1", 8889)
 end
 
 function echo()
@@ -43,9 +43,9 @@ function echo()
     local message = ""
     for i=1,2 do
         message, hull = mailbox.receive(true)
-        mailbox.send(message, hull)
+        mailbox.send(hull, message)
     end
-    mailbox.send("Man, I'm tired. Leave me alone", hull)
+    mailbox.send(hull, "Man, I'm tired. Leave me alone")
 end
 
 function echochk()
@@ -58,21 +58,21 @@ function echochk()
     while (icolor ~= ncolors + 1) do
         if mailbox.hasMessages() then
             message, hull = mailbox.receive(false)
-            mailbox.send(message, hull)
+            mailbox.send(hull, message)
             changeColor(colors[icolor])
             icolor = icolor + 1
         end
     end
-    mailbox.send("Oops. I'm out of colors...", hull)
+    mailbox.send(hull, "Oops. I'm out of colors...")
     changeColor({0, 0, 0})
 end
 
 function send()
-    mailbox.send("Hi", 888)
+    mailbox.send(888, "Hi")
 end
 
 function sendall()
-    mailbox.send("Hi everyone", -1)
+    mailbox.send(-1, "Hi everyone")
 end
 
 -- send()
