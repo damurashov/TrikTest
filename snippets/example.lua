@@ -57,7 +57,7 @@ function echochk()
     changeColor({1, 1, 1})
     while (icolor ~= ncolors + 1) do
         if mailbox.hasMessages() then
-            message, hull = mailbox.receive(false)
+            hull, message = mailbox.receive(false)
             mailbox.send(hull, message)
             changeColor(colors[icolor])
             icolor = icolor + 1
