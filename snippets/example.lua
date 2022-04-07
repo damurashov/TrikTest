@@ -42,7 +42,7 @@ function echo()
     local hull = -1
     local message = ""
     for i=1,2 do
-        message, hull = mailbox.receive(true)
+        hull, message = mailbox.receive(true)
         mailbox.send(hull, message)
     end
     mailbox.send(hull, "Man, I'm tired. Leave me alone")
