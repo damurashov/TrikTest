@@ -8,6 +8,7 @@ if __name__ == "__main__":
 		server.start(trik.tcp_handle, 8889)
 	elif sys.argv[1] == "client":
 		client.async_connect("192.168.4.1", 8889, trik.tcp_handle)
+		# client.async_connect("127.0.0.1", 8889, trik.tcp_handle)
 	else:
 		print("wrong args")
 		exit(0)
