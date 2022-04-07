@@ -80,15 +80,7 @@ end
 -- connect()
 -- echo()
 echochk()
-
--- -- Timer creation, that calls our function each 0.1 second
--- t = Timer.new(1, function() connect() end)
--- -- Timer start
--- t:start()
-
 changeColor(colors[5])
-
--- Changing LEDs color to white
 
 
 
