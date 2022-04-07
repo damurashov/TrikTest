@@ -35,7 +35,7 @@ end
 -- changeColor(colors[7])
 
 function connect()
-    mailbox.connect("192.168.4.1", 8889)
+    mailbox.connect("192.168.4.2", 8889)
 end
 
 function echo()
