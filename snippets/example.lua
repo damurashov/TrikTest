@@ -1,5 +1,3 @@
--- This script shows how to fly to different points in Positioning system
-
 -- Simplification and caching table.unpack calls
 local unpack = table.unpack
 
@@ -81,12 +79,13 @@ function sendHullNumber()
     send()
 end
 
+-- connect()
 -- send()
 -- sendall()
-connect()
-sendHullNumber()
--- echo()
+-- sendHullNumber()
+echo()
 -- echochk()
+
 changeColor(colors[5])
 
 
