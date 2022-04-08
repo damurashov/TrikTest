@@ -1,5 +1,3 @@
--- This script shows how to fly to different points in Positioning system
-
 -- Simplification and caching table.unpack calls
 local unpack = table.unpack
 
@@ -42,7 +40,7 @@ function echo()
     local hull = -1
     local message = ""
     for i=1,2 do
-        message, hull = mailbox.receive(true)
+        hull, message = mailbox.receive(true)
         mailbox.send(hull, message)
     end
     mailbox.send(hull, "Man, I'm tired. Leave me alone")
@@ -57,7 +55,7 @@ function echochk()
     changeColor({1, 1, 1})
     while (icolor ~= ncolors + 1) do
         if mailbox.hasMessages() then
-            message, hull = mailbox.receive(false)
+            hull, message = mailbox.receive(false)
             mailbox.send(hull, message)
             changeColor(colors[icolor])
             icolor = icolor + 1
@@ -68,27 +66,27 @@ function echochk()
 end
 
 function send()
-    mailbox.send(888, "Hi")
+    mailbox.send(888, "Hi. Let's get to know each other. Here is my hull number. Call me")
+    mailbox.send(888, tostring(mailbox.myHullNumber()))
 end
 
 function sendall()
     mailbox.send(-1, "Hi everyone")
 end
 
+function sendHullNumber()
+    mailbox.setHullNumber(11)
+    send()
+end
+
+-- connect()
 -- send()
 -- sendall()
--- connect()
--- echo()
-echochk()
-
--- -- Timer creation, that calls our function each 0.1 second
--- t = Timer.new(1, function() connect() end)
--- -- Timer start
--- t:start()
+-- sendHullNumber()
+echo()
+-- echochk()
 
 changeColor(colors[5])
-
--- Changing LEDs color to white
 
 
 
